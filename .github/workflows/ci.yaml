@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -28,21 +29,32 @@ jobs:
         working-directory: labs/40-containerized-node-app
         run: docker build -t quote-app -f docker/Dockerfile .
 
-      - name: Run container
+      - name: Run container + strict health check
         run: |
           docker run -d --name quote-app -p 3000:3000 quote-app
-          for i in $(seq 1 30); do
-            if curl -fsS http://localhost:3000/health >/dev/null; then
+
+          echo "Waiting for container health..."
+
+          # Timeout plus court (15 sec au lieu de 30)
+          for i in $(seq 1 15); do
+            RESPONSE=$(curl -s http://localhost:3000/health || true)
+
+            # Health check strict : vérifier contenu attendu
+            if echo "$RESPONSE" | grep -q "ok"; then
               echo "Health check passed"
               exit 0
             fi
+
             sleep 1
           done
-          echo "Health check failed"
+
+          echo "Health check FAILED"
+          echo "----- DEBUG INFO -----"
+          docker ps -a
           docker logs quote-app || true
+          ss -lntp || true
           exit 1
 
       - name: Stop container
         if: always()
-        run: |
-          docker rm -f quote-app || true
+        run: docker rm -f quote-app || true
