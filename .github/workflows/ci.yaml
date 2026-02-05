@@ -17,11 +17,11 @@ jobs:
           node-version: "24"
 
       - name: Install dependencies
-        working-directory: ../../40-containerized-node-app/app
+        working-directory: ../../labs/40-containerized-node-app/app
         run: npm ci
 
       - name: Run tests if present
-        working-directory: ../../40-containerized-node-app/app
+        working-directory: ../../labs/40-containerized-node-app/app
         run: npm test --if-present
 
       - name: Build Docker image
