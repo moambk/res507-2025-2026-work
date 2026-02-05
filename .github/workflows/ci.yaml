@@ -32,19 +32,13 @@ jobs:
       - name: Run container + strict health check
         run: |
           docker run -d --name quote-app -p 3000:3000 quote-app
-
           echo "Waiting for container health..."
-
-          # Timeout plus court (15 sec au lieu de 30)
           for i in $(seq 1 15); do
-            RESPONSE=$(curl -s http://localhost:3000/health || true)
-
-            # Health check strict : vérifier contenu attendu
+            RESPONSE=$(curl -fsS http://localhost:3000/health || true)
             if echo "$RESPONSE" | grep -q "ok"; then
               echo "Health check passed"
               exit 0
             fi
-
             sleep 1
           done
 
