@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS quotes (
 
 INSERT INTO quotes(author, text)
 VALUES
-  ('grace', 'Make it work, then make it right, then make it fast.'),
+  ('grace', 'Make it workzzzzzz, then make it right, then make it fast.'),
   ('linus', 'Talk is cheap. Show me the code.'),
   ('devops', 'If it hurts, do it more often.')
 ON CONFLICT DO NOTHING;
